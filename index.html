@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>บิงซูตู้ส้ม</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(180deg, #fff7ed 0%, #fff 100%);
+      color: #1f2937;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+    .header {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 24px rgba(249, 115, 22, 0.25);
+      margin-bottom: 16px;
+    }
+    .title {
+      font-size: 30px;
+      font-weight: 800;
+      margin: 0 0 6px;
+    }
+    .subtitle {
+      font-size: 14px;
+      opacity: 0.92;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+    .card h2 {
+      margin: 0 0 14px;
+      color: #ea580c;
+      font-size: 18px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr 1fr;
+      gap: 8px;
+      align-items: end;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #6b7280;
+    }
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+    .row-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #111827;
+    }
+    .btns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #f97316;
+      color: white;
+    }
+    .btn-secondary {
+      background: #1f2937;
+      color: white;
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    .result {
+      border-left: 6px solid #22c55e;
+      background: #f9fafb;
+      padding: 14px;
+      border-radius: 14px;
+      line-height: 1.7;
+    }
+    .warn-low { border-left-color: #ef4444; }
+    .warn-high { border-left-color: #f59e0b; }
+    .history-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 10px;
+      background: #fff;
+    }
+    .history-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-weight: 700;
+    }
+    .muted {
+      color: #6b7280;
+      font-size: 13px;
+    }
+    .section-note {
+      font-size: 13px;
+      color: #92400e;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .small {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    @media (max-width: 720px) {
+      .grid, .grid-4 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">🍧 บิงซูตู้ส้ม</div>
+      <p class="subtitle">ระบบบันทึกยอดขายแบบไฟล์เดียว ใช้ง่ายบนเว็บ</p>
+    </div>
+
+    <div class="card">
+      <h2>ข้อมูลทั่วไป</h2>
+      <div class="grid">
+        <div>
+          <label>วันที่</label>
+          <input id="date" type="date" />
+        </div>
+        <div>
+          <label>ชื่อพนักงาน</label>
+          <input id="staff" placeholder="ชื่อพนักงาน" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>จำนวนสินค้าที่ขาย</h2>
+      <div class="section-note">สูตร: จำนวนขาย = วันก่อน + เติมเพิ่ม - คงเหลือ</div>
+
+      <div class="row-title">Size M</div>
+      <div class="grid-4">
+        <div><label>วันก่อน</label><input id="m_prev" type="number" min="0" value="0"></div>
+        <div><label>เติมเพิ่ม</label><input id="m_add" type="number" min="0" value="0"></div>
+        <div><label>คงเหลือ</label><input id="m_left" type="number" min="0" value="0"></div>
+        <div><label>ขายได้</label><input id="m_sold" readonly></div>
+      </div>
+
+      <br>
+      <div class="row-title">Size L</div>
+      <div class="grid-4">
+        <div><label>วันก่อน</label><input id="l_prev" type="number" min="0" value="0"></div>
+        <div><label>เติมเพิ่ม</label><input id="l_add" type="number" min="0" value="0"></div>
+        <div><label>คงเหลือ</label><input id="l_left" type="number" min="0" value="0"></div>
+        <div><label>ขายได้</label><input id="l_sold" readonly></div>
+      </div>
+
+      <br>
+      <div class="row-title">บานาน่า สปริท</div>
+      <div class="grid-4">
+        <div><label>วันก่อน</label><input id="b_prev" type="number" min="0" value="0"></div>
+        <div><label>เติมเพิ่ม</label><input id="b_add" type="number" min="0" value="0"></div>
+        <div><label>คงเหลือ</label><input id="b_left" type="number" min="0" value="0"></div>
+        <div><label>ขายได้</label><input id="b_sold" readonly></div>
+      </div>
+
+      <br>
+      <div class="row-title">ครีมชีสไข่มุก</div>
+      <div class="grid-4">
+        <div><label>วันก่อน</label><input id="c_prev" type="number" min="0" value="0"></div>
+        <div><label>เติมเพิ่ม</label><input id="c_add" type="number" min="0" value="0"></div>
+        <div><label>คงเหลือ</label><input id="c_left" type="number" min="0" value="0"></div>
+        <div><label>ขายได้</label><input id="c_sold" readonly></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>ยอดเงิน</h2>
+      <div class="grid">
+        <div>
+          <label>เงินโอน QR</label>
+          <input id="pay_qr" type="number" min="0" value="0">
+        </div>
+        <div>
+          <label>เงินสด</label>
+          <input id="pay_cash" type="number" min="0" value="0">
+        </div>
+        <div>
+          <label>Grab ราคาเต็ม</label>
+          <input id="grab_full" type="number" min="0" value="0">
+        </div>
+        <div>
+          <label>LINE MAN ราคาเต็ม</label>
+          <input id="lineman_full" type="number" min="0" value="0">
+        </div>
+      </div>
+      <p class="small">ระบบจะคำนวณสุทธิ Grab / LINE MAN หลังหัก GP 34% ให้</p>
+    </div>
+
+    <div class="card">
+      <div class="btns">
+        <button class="btn-primary" onclick="calculate()">คำนวณ</button>
+        <button class="btn-secondary" onclick="saveRecord()">บันทึก</button>
+        <button class="btn-danger" onclick="clearAll()">ล้างฟอร์ม</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>ผลลัพธ์</h2>
+      <div id="result" class="result">กดคำนวณเพื่อดูผล</div>
+    </div>
+
+    <div class="card">
+      <h2>ประวัติที่บันทึกไว้</h2>
+      <div class="btns" style="margin-bottom:12px;">
+        <button class="btn-secondary" onclick="exportCSV()">Export CSV</button>
+        <button class="btn-danger" onclick="clearHistory()">ลบประวัติทั้งหมด</button>
+      </div>
+      <div id="history"></div>
+    </div>
+  </div>
+
+  <script>
+    const PRICE_M_MIN = 55, PRICE_M_MAX = 69;
+    const PRICE_L_MIN = 79, PRICE_L_MAX = 99;
+    const PRICE_BANANA = 65;
+    const PRICE_CREAM = 39;
+    const MAX_TOPPING_PER_CUP = 45;
+    const GP_RATE = 0.34;
+
+    function todayStr() {
+      return new Date().toISOString().split("T")[0];
+    }
+
+    function num(id) {
+      return parseFloat(document.getElementById(id).value) || 0;
+    }
+
+    function sold(prev, add, left) {
+      return Math.max(0, prev + add - left);
+    }
+
+    function fmt(n) {
+      return Number(n || 0).toLocaleString("th-TH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function calculate() {
+      const mSold = sold(num("m_prev"), num("m_add"), num("m_left"));
+      const lSold = sold(num("l_prev"), num("l_add"), num("l_left"));
+      const bSold = sold(num("b_prev"), num("b_add"), num("b_left"));
+      const cSold = sold(num("c_prev"), num("c_add"), num("c_left"));
+
+      document.getElementById("m_sold").value = mSold;
+      document.getElementById("l_sold").value = lSold;
+      document.getElementById("b_sold").value = bSold;
+      document.getElementById("c_sold").value = cSold;
+
+      const total = mSold + lSold + bSold + cSold;
+      const minExp = mSold*PRICE_M_MIN + lSold*PRICE_L_MIN + bSold*PRICE_BANANA + cSold*PRICE_CREAM;
+      const maxExp = mSold*PRICE_M_MAX + lSold*PRICE_L_MAX + bSold*PRICE_BANANA + cSold*PRICE_CREAM + total*MAX_TOPPING_PER_CUP;
+
+      const qr = num("pay_qr");
+      const cash = num("pay_cash");
+      const grabFull = num("grab_full");
+      const linemanFull = num("lineman_full");
+      const grabNet = grabFull * (1 - GP_RATE);
+      const linemanNet = linemanFull * (1 - GP_RATE);
+      const gross = qr + cash + grabFull + linemanFull;
+      const net = qr + cash + grabNet + linemanNet;
+
+      let status = "✅ ยอดดูสมเหตุสมผล";
+      let className = "result";
+      if (gross < minExp) {
+        status = "❌ ยอดต่ำกว่าช่วงที่ควรเป็น";
+        className = "result warn-low";
+      } else if (gross > maxExp) {
+        status = "⚠️ ยอดสูงกว่าช่วงที่ควรเป็น";
+        className = "result warn-high";
+      }
+
+      const html = `
+        <strong>${status}</strong><br>
+        จำนวนขายรวม: ${total} รายการ<br>
+        ช่วงที่ควรเป็น: ${fmt(minExp)} - ${fmt(maxExp)} บาท<br>
+        ยอดลูกค้าจ่ายรวม (Gross): ${fmt(gross)} บาท<br>
+        ยอดสุทธิร้านได้รับ: ${fmt(net)} บาท<br>
+        Grab สุทธิ: ${fmt(grabNet)} บาท<br>
+        LINE MAN สุทธิ: ${fmt(linemanNet)} บาท
+      `;
+
+      const result = document.getElementById("result");
+      result.className = className;
+      result.innerHTML = html;
+
+      return {
+        date: document.getElementById("date").value,
+        staff: document.getElementById("staff").value,
+        mSold, lSold, bSold, cSold, total,
+        minExp, maxExp, qr, cash, grabFull, linemanFull, grabNet, linemanNet, gross, net, status
+      };
+    }
+
+    function saveRecord() {
+      const rec = calculate();
+      if (!rec.staff) {
+        alert("กรุณากรอกชื่อพนักงาน");
+        return;
+      }
+      const records = JSON.parse(localStorage.getItem("bingsu_records") || "[]");
+      records.unshift(rec);
+      localStorage.setItem("bingsu_records", JSON.stringify(records));
+      renderHistory();
+      alert("บันทึกเรียบร้อย");
+    }
+
+    function renderHistory() {
+      const history = document.getElementById("history");
+      const records = JSON.parse(localStorage.getItem("bingsu_records") || "[]");
+      if (!records.length) {
+        history.innerHTML = '<div class="muted">ยังไม่มีข้อมูล</div>';
+        return;
+      }
+      history.innerHTML = records.map((r, i) => `
+        <div class="history-item">
+          <div class="history-top">
+            <div>${r.date || "-"} · ${r.staff}</div>
+            <div>${fmt(r.gross)} บาท</div>
+          </div>
+          <div class="muted">
+            M ${r.mSold} | L ${r.lSold} | บานาน่า ${r.bSold} | ครีมชีส ${r.cSold}<br>
+            สุทธิร้าน ${fmt(r.net)} บาท
+          </div>
+          <div style="margin-top:8px;">
+            <button class="btn-danger" onclick="deleteOne(${i})">ลบ</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function deleteOne(index) {
+      const records = JSON.parse(localStorage.getItem("bingsu_records") || "[]");
+      records.splice(index, 1);
+      localStorage.setItem("bingsu_records", JSON.stringify(records));
+      renderHistory();
+    }
+
+    function clearHistory() {
+      if (!confirm("ลบประวัติทั้งหมดใช่ไหม")) return;
+      localStorage.removeItem("bingsu_records");
+      renderHistory();
+    }
+
+    function clearAll() {
+      document.querySelectorAll("input").forEach(inp => {
+        if (inp.type === "date") return;
+        if (inp.id.endsWith("_sold")) {
+          inp.value = "";
+        } else {
+          inp.value = "0";
+        }
+      });
+      document.getElementById("staff").value = "";
+      document.getElementById("date").value = todayStr();
+      document.getElementById("result").className = "result";
+      document.getElementById("result").innerHTML = "กดคำนวณเพื่อดูผล";
+    }
+
+    function exportCSV() {
+      const records = JSON.parse(localStorage.getItem("bingsu_records") || "[]");
+      if (!records.length) {
+        alert("ยังไม่มีข้อมูลให้ export");
+        return;
+      }
+      const headers = [
+        "วันที่","พนักงาน","M","L","บานาน่า","ครีมชีส","รวม","Gross","Net","สถานะ"
+      ];
+      const rows = records.map(r => [
+        r.date, r.staff, r.mSold, r.lSold, r.bSold, r.cSold, r.total, r.gross, r.net, r.status
+      ].join(","));
+      const csv = "\uFEFF" + [headers.join(","), ...rows].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "bingsu-records.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("date").value = todayStr();
+    renderHistory();
+  </script>
+</body>
+</html>
