@@ -73,6 +73,9 @@
       border-radius: 12px;
       font-size: 14px;
     }
+    input[readonly] {
+      background: #f9fafb;
+    }
     .row-title {
       font-weight: 700;
       margin-bottom: 8px;
@@ -296,8 +299,8 @@
       document.getElementById("c_sold").value = cSold;
 
       const total = mSold + lSold + bSold + cSold;
-      const minExp = mSold*PRICE_M_MIN + lSold*PRICE_L_MIN + bSold*PRICE_BANANA + cSold*PRICE_CREAM;
-      const maxExp = mSold*PRICE_M_MAX + lSold*PRICE_L_MAX + bSold*PRICE_BANANA + cSold*PRICE_CREAM + total*MAX_TOPPING_PER_CUP;
+      const minExp = mSold * PRICE_M_MIN + lSold * PRICE_L_MIN + bSold * PRICE_BANANA + cSold * PRICE_CREAM;
+      const maxExp = mSold * PRICE_M_MAX + lSold * PRICE_L_MAX + bSold * PRICE_BANANA + cSold * PRICE_CREAM + total * MAX_TOPPING_PER_CUP;
 
       const qr = num("pay_qr");
       const cash = num("pay_cash");
@@ -391,8 +394,7 @@
     }
 
     function clearAll() {
-      document.querySelectorAll("input").forEach(inp => {
-        if (inp.type === "date") return;
+      document.querySelectorAll('input[type="number"]').forEach(inp => {
         if (inp.id.endsWith("_sold")) {
           inp.value = "";
         } else {
@@ -403,32 +405,16 @@
       document.getElementById("date").value = todayStr();
       document.getElementById("result").className = "result";
       document.getElementById("result").innerHTML = "กดคำนวณเพื่อดูผล";
+      calculate();
     }
 
-    function exportCSV() {
-      const records = JSON.parse(localStorage.getItem("bingsu_records") || "[]");
-      if (!records.length) {
-        alert("ยังไม่มีข้อมูลให้ export");
-        return;
-      }
-      const headers = [
-        "วันที่","พนักงาน","M","L","บานาน่า","ครีมชีส","รวม","Gross","Net","สถานะ"
-      ];
-      const rows = records.map(r => [
-        r.date, r.staff, r.mSold, r.lSold, r.bSold, r.cSold, r.total, r.gross, r.net, r.status
-      ].join(","));
-      const csv = "\uFEFF" + [headers.join(","), ...rows].join("\n");
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "bingsu-records.csv";
-      a.click();
-      URL.revokeObjectURL(url);
-    }
+    document.querySelectorAll('input[type="number"]').forEach(inp => {
+      inp.addEventListener('input', calculate);
+    });
 
     document.getElementById("date").value = todayStr();
     renderHistory();
+    calculate();
   </script>
 </body>
 </html>
